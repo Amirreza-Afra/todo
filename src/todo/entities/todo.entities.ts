@@ -15,6 +15,6 @@ export class Todolist {
   @Column()
   startDate: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({nullable: true })
   endDate: Date;
 }

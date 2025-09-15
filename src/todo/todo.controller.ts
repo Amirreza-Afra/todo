@@ -1,7 +1,21 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDTO } from './dto/req/create.req.dto';
-import { ApiOkResponse, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { GetTaskResDto } from './dto/res/getTasks.res.dto';
 
 //@ApiTags('todos')
@@ -21,7 +35,7 @@ export class TodoController {
   }
 
   @Get()
-  @ApiOkResponse({ })
+  @ApiOkResponse({})
   @ApiResponse({
     status: 200,
     description: 'return all tasks or filtered by title',
@@ -37,5 +51,15 @@ export class TodoController {
   })
   async getTask(@Query('title') title?: string) {
     return this.todoService.getTask(title);
+  }
+
+  @ApiOkResponse({ description: 'task deleted from todo list' })
+  @ApiBadRequestResponse({
+    description: 'Validation failed (numeric string is expected)',
+  })
+  @ApiNotFoundResponse({description : 'task with id not found'})
+  @Delete(':id')
+  async deleteTask(@Param('id', ParseIntPipe) id: number) {
+    return this.todoService.deletTask(id);
   }
 }

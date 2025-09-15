@@ -19,7 +19,7 @@ export class TodoService {
 
   async createTasks(dtos: CreateTodoDTO[]): Promise<{ message: string }> {
     if (!dtos || dtos.length === 0) {
-        throw new BadRequestException('The task list cannot be empty');
+      throw new BadRequestException('The task list cannot be empty');
     }
 
     return await this.todoRep.manager.transaction(
@@ -33,13 +33,13 @@ export class TodoService {
             }
           }
 
-          const tasks = transactionalEntityManager.create(Todolist,dtos);
+          const tasks = transactionalEntityManager.create(Todolist, dtos);
           await transactionalEntityManager.save(tasks);
           return { message: 'task added to todo list' };
         } catch (error) {
-            if(error instanceof BadRequestException){
-                throw error;
-            }
+          if (error instanceof BadRequestException) {
+            throw error;
+          }
           throw new InternalServerErrorException(
             'Failed to create task',
             error,
@@ -47,7 +47,6 @@ export class TodoService {
         }
       },
     );
-    
   }
 
   async getTask(title?: string): Promise<GetTaskResDto[]> {
@@ -71,5 +70,21 @@ export class TodoService {
     }
 
     throw new InternalServerErrorException('Failed to fetch tasks');
+  }
+
+  async deletTask(id: number): Promise<{ message: string }> {
+    try {
+      const deleted = await this.todoRep.delete({ id: id });
+      if (deleted.affected == 0) {
+        throw new NotFoundException(`task with ${id} not found`);
+      } else {
+        return { message: 'task deleted from todo list' };
+      }
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Failed to create task', error);
+    }
   }
 }
