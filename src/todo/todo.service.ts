@@ -17,22 +17,37 @@ export class TodoService {
     private readonly todoRep: Repository<Todolist>,
   ) {}
 
-async createTasks(dtos: CreateTodoDTO[]): Promise<{ message: string }> {
-  try {
-    for (const dto of dtos) {
-      if (dto.endDate && dto.startDate >= dto.endDate) {
-        throw new BadRequestException(
-          `end date must be greater than start date for task: ${dto.title}`,
-        );
-      }
+  async createTasks(dtos: CreateTodoDTO[]): Promise<{ message: string }> {
+    if (!dtos || dtos.length === 0) {
+        throw new BadRequestException('The task list cannot be empty');
     }
 
-    const tasks = this.todoRep.create(dtos); 
-    await this.todoRep.save(tasks);
-      return { message: 'task added to todo list' };
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to create task', error);
-    }
+    return await this.todoRep.manager.transaction(
+      async (transactionalEntityManager) => {
+        try {
+          for (const dto of dtos) {
+            if (dto.endDate && dto.startDate >= dto.endDate) {
+              throw new BadRequestException(
+                `end date must be greater than start date for task: ${dto.title}`,
+              );
+            }
+          }
+
+          const tasks = transactionalEntityManager.create(Todolist,dtos);
+          await transactionalEntityManager.save(tasks);
+          return { message: 'task added to todo list' };
+        } catch (error) {
+            if(error instanceof BadRequestException){
+                throw error;
+            }
+          throw new InternalServerErrorException(
+            'Failed to create task',
+            error,
+          );
+        }
+      },
+    );
+    
   }
 
   async getTask(title?: string): Promise<GetTaskResDto[]> {

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDTO } from './dto/req/create.req.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { GetTaskResDto } from './dto/res/getTasks.res.dto';
 
 //@ApiTags('todos')
@@ -21,6 +21,7 @@ export class TodoController {
   }
 
   @Get()
+  @ApiOkResponse({ })
   @ApiResponse({
     status: 200,
     description: 'return all tasks or filtered by title',
