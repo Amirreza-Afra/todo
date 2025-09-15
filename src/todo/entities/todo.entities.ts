@@ -14,9 +14,9 @@ export class Todolist {
     default: State.NOT_STARTED,})
   state: State;
 
-  @Column({nullable: true})
+  @Column()
   startDate: Date;
 
-  @Column()
+  @Column({ type: 'datetime', nullable: true })
   endDate?: Date;
 }
