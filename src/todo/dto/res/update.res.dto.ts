@@ -7,13 +7,12 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import { State } from 'src/common/enum/todo_state.enum';
 
-export class UpdateTodoDTO {
+export class UpdateTodoResDTO {
   @ApiProperty({ example: '1', description: 'id of task' })
   @IsNumber()
   @IsNotEmpty()
@@ -21,38 +20,38 @@ export class UpdateTodoDTO {
 
   @ApiPropertyOptional({ example: 'math', description: 'name of task' })
   @IsString()
-  @IsOptional()
-  title?: string;
+  @IsNotEmpty()
+  title: string;
 
   @ApiPropertyOptional({ enum: State, example: State.COMPLETE })
   @IsEnum(State)
-  @IsOptional()
-  state?: State;
+  @IsNotEmpty()
+  state: State;
 
   @ApiPropertyOptional({
     example: '2025-04-05T09:00:00.000Z',
     description: 'start date in ISO format',
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsDate()
   @Type(() => Date)
-  startDate?: Date;
+  startDate: Date;
 
   @ApiPropertyOptional({
     example: '2025-04-05T09:00:00.000Z',
     description: 'end date in ISO format',
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsDate()
   @Type(() => Date)
-  endDate?: Date;
+  endDate: Date;
 }
 
-export class UpdateTodolistDTO {
+export class UpdateTodolistResDTO {
   @ApiProperty({ description: 'List of tasks' })
   @IsArray()
   @IsDefined()
   @ValidateNested({ each: true })
-  @Type(() => UpdateTodoDTO)
-  updateTodos: UpdateTodoDTO[];
+  @Type(() => UpdateTodoResDTO)
+  updateTodos: UpdateTodoResDTO[];
 }

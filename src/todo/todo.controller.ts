@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -17,12 +18,14 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { GetTaskResDto } from './dto/res/getTasks.res.dto';
+import { UpdateTodolistDTO } from './dto/req/update.req.dto';
 
 //@ApiTags('todos')
 @Controller('todo')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
+  //-----------created tasks-----------------
   @Post()
   @ApiResponse({ status: 201, description: 'tasks added' })
   @ApiResponse({ status: 400, description: 'validation failed' })
@@ -34,6 +37,7 @@ export class TodoController {
     return this.todoService.createTasks(dtos);
   }
 
+ //-------------get tasks---------------
   @Get()
   @ApiOkResponse({})
   @ApiResponse({
@@ -53,6 +57,16 @@ export class TodoController {
     return this.todoService.getTask(title);
   }
 
+
+
+  //-------------change tasks---------------
+  @Patch()
+  async changeTasks(@Body() dto:UpdateTodolistDTO){
+    return this.todoService.changeTasks(dto);
+  }
+
+  
+  //-------------delete task---------------
   @ApiOkResponse({ description: 'task deleted from todo list' })
   @ApiBadRequestResponse({
     description: 'Validation failed (numeric string is expected)',
@@ -62,4 +76,6 @@ export class TodoController {
   async deleteTask(@Param('id', ParseIntPipe) id: number) {
     return this.todoService.deletTask(id);
   }
+
+  
 }
