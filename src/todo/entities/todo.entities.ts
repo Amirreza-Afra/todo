@@ -9,14 +9,12 @@ export class Todolist {
   @Column()
   title: string;
 
-  @Column({type: 'enum',
-    enum: State,
-    default: State.NOT_STARTED,})
+  @Column({ type: 'enum', enum: State, default: State.NOT_STARTED })
   state: State;
 
   @Column()
   startDate: Date;
 
   @Column({ type: 'datetime', nullable: true })
-  endDate?: Date;
+  endDate: Date;
 }

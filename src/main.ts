@@ -10,7 +10,7 @@ async function bootstrap() {
     whitelist : true, 
     forbidNonWhitelisted : true,
     transform : true,
-    validationError: { target: false },
+    validationError: { target: true },
   }))
 
   const config = new DocumentBuilder()
