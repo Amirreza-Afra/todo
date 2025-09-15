@@ -15,18 +15,17 @@ export class TodoService {
     private readonly todoRep: Repository<Todolist>,
   ) {}
 
-  async createTask(dto: CreateTodoDTO): Promise<{ message: string }>{
-  if (dto.endDate && dto.startDate >= dto.endDate) {
-    throw new BadRequestException('end date must be greater than start date');
-  }
+  async createTask(dto: CreateTodoDTO): Promise<{ message: string }> {
+    if (dto.endDate && dto.startDate >= dto.endDate) {
+      throw new BadRequestException('end date must be greater than start date');
+    }
 
-  try {
-    const task = this.todoRep.create(dto);
-    await this.todoRep.save(task);
-    return { message: 'task added to todo list' };
-  } catch (error) {
-    throw new InternalServerErrorException('Failed to create task',error);
+    try {
+      const task = this.todoRep.create(dto);
+      await this.todoRep.save(task);
+      return { message: 'task added to todo list' };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create task', error);
+    }
   }
-}
-
 }
